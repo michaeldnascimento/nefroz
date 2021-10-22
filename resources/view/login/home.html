@@ -1,0 +1,42 @@
+<h3 style="text-align: center">Nefroz</h3>
+    <div id="logreg-forms">
+        <form method="post" autocomplete="off" class="form-signin">
+            {{status}}
+            <h1 class="h4 mb-3 font-weight-normal" style="text-align: center"> Acesso rápido com</h1>
+            <div class="social-login">
+                <a class="btn google-btn social-btn btn-block" href="{{URL}}/google/" type="button"><span><i class="fab fa-google"></i> Entrar com Google</span> </a>
+            </div>
+            <p style="text-align:center"> OU  </p>
+            <input type="email" name="email" class="form-control" placeholder="E-mail" required autofocus>
+            <input type="password" name="senha" class="form-control" placeholder="Senha" required>
+
+            <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+            <a href="#" id="forgot_pswd">Esqueceu a Senha?</a>
+            <hr>
+            <!-- <p>Don't have an account!</p>  -->
+            <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Cadastrar Nova Conta</button>
+        </form>
+
+        <form action="{{URL}}/recupera/" method="post" class="form-reset">
+            <input type="email" id="resetEmail" name="resetEmail" class="form-control" placeholder="Email Cadastrado" required="" autofocus="">
+            <button class="btn btn-primary btn-block" type="submit">Redefinir Senha</button>
+            <a href="#" id="cancel_reset"><i class="fas fa-angle-left"></i> Voltar</a>
+        </form>
+
+        <form action="{{URL}}/login/users/new" method="post" class="form-signup">
+            <div class="social-login">
+                <a class="btn google-btn social-btn" type="button" href="google/"><span><i class="fab fa-google"></i> Inscreva-se no Google</span> </a>
+            </div>
+
+            <p style="text-align:center">OU</p>
+
+            <input type="text" id="user-name" name="nome" class="form-control" placeholder="Nome Completo" required>
+            <input type="email" id="user-email" name="email" class="form-control" placeholder="E-mail" required>
+            <input type="password" id="user-pass" name="senha" class="form-control" placeholder="Senha" required>
+            <input type="password" id="user-pass-repeats" name="confirmaSenha" class="form-control" placeholder="Repetir Senha" required minlength="6">
+
+            <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Inscrever-se</button>
+            <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Voltar</a>
+        </form>
+</div>
+

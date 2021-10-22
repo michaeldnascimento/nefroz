@@ -1,0 +1,8 @@
+.idea
+.env
+/vendor
+/Fisiopatologia Renal.rar
+/Fisiopatologia Renal
+/resources/fisiopatologia_renal
+composer.lock
+composer.phar

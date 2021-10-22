@@ -1,0 +1,21 @@
+{
+  "name": "intranet.fm.usp.br/nefroz",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Michael Douglas N. Da Silva",
+      "email": "michael.douglas@fm.usp.br"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "require": {
+    "php": "5.6.*",
+    "ext-json": "*",
+    "ext-pdo": "*"
+  }
+}
