@@ -72,4 +72,16 @@ class Home {
         //SUCESSO
         return true;
     }
+
+    /**
+     * Método responsável por retornar a session do usuário
+     * @return string
+     */
+    public static function getSession()
+    {
+
+        //RETORNA A SESSION
+        return $_SESSION['nefroz']['login']['usuario'];
+
+    }
 }

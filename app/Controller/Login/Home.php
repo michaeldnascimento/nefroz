@@ -5,7 +5,7 @@ namespace App\Controller\Login;
 use App\Http\Request;
 use App\Model\Entity\User;
 use \App\Utils\View;
-use \App\Session\login\home as SessionLogin;
+use \App\Session\Login\Home as SessionLogin;
 
 class Home extends Page {
 

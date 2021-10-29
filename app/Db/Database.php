@@ -13,12 +13,24 @@ use PDOStatement;
 
 class Database extends DB{
 
-    private $table = "usuarios";
+    /**
+     * Nome da tabela a ser manipulada
+     * @var string
+     */
+    private $table;
 
-    public function __construct() {
+
+    /**
+     * Define a tabela e instancia e conexão
+     * @param string|null $table
+     */
+    public function __construct($table = null) {
+
+        $this->table = $table;
         $config = new Config();
         $config->mysql['dbname'] = 'nefroz';
         parent::__construct($config->mysql);
+
     }
 
     /**
@@ -28,21 +40,21 @@ class Database extends DB{
      */
     public function insert($values){
         try {
+
             //DADOS DA QUERY
             $fields = array_keys($values);
             //$binds  = array_pad([],count($fields),'?');
 
             //MONTA A QUERY
-            $query = 'INSERT INTO '.$this->table.' ('.implode(',',$fields).') VALUES (:nome, :email, :senha, :created_date, :updated_date)';
+            $query = 'INSERT INTO '.$this->table.' ('.implode(',',$fields).') VALUES (:' . implode(',:',$fields) . ')';
 
             $this->setQuery($query);
 
-            //RESGATA OS VALORES
-            $this->bind(':nome', $values['nome']);
-            $this->bind(':email', $values['email']);
-            $this->bind(':senha', $values['senha']);
-            $this->bind(':created_date', $values['created_date']);
-            $this->bind(':updated_date', $values['updated_date']);
+            //MONTA O BIND COM OS CAMPOS ENVIADOS
+            foreach ($fields as $field):
+                 $this->bind(':'. $field, $values[$field]);
+            endforeach;
+
 
             //EXECUTA O INSERT
             if ($this->execute()) {

@@ -14,6 +14,7 @@ $obRouter->get('/', [
     }
 ]);
 
+
 //ROTA DOWNLOAD
 $obRouter->get('/download', [
     'middlewares' => [
@@ -22,6 +23,17 @@ $obRouter->get('/download', [
     ],
     function($request){
         return new Response(200, Pages\Download::getDownload($request));
+    }
+]);
+
+//ROTA DOWNLOAD EXECUTAR
+$obRouter->get('/download/{version}', [
+    'middlewares' => [
+        //'cache'
+        'required-login'
+    ],
+    function($request, $version){
+        return new Response(200, Pages\Download::startDownload($request, $version));
     }
 ]);
 

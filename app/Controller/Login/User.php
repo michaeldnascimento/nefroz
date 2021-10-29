@@ -58,6 +58,13 @@ class User extends Page {
         $email = isset($postVars['email']) ? $postVars['email'] : '';
         $nome  = isset($postVars['nome']) ? $postVars['nome'] : '';
         $senha = isset($postVars['senha']) ? $postVars['senha'] : '';
+        $confirmaSenha = isset($postVars['confirmaSenha']) ? $postVars['confirmaSenha'] : '';
+
+        //VERIFICA A VALIDAÇÃO DE SENHA
+        if ($senha != $confirmaSenha){
+            //REDIRECIONA O USUÁRIO
+            $request->getRouter()->redirect('/login?status=confirmation');
+        }
 
         //VALIDA E-MAIL DO USUÁRIO
         $obUser = EntityUser::getUserByEmail($email);
@@ -103,8 +110,11 @@ class User extends Page {
             case 'deleted':
                 return Alert::getSuccess('Usuário excluído com sucesso!');
                 break;
+            case 'confirmation':
+                return Alert::getError('Senha e confirmação de senha são diferentes, tente novamente!');
+                break;
             case 'duplicated':
-                return Alert::getError('O E-mail digitado já está sendo ultilizado por outro usuário!');
+                return Alert::getError('O E-mail digitado já está sendo utilizado por outro usuário!');
                 break;
         }
     }

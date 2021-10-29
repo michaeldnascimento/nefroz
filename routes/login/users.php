@@ -19,17 +19,27 @@ $obRouter->get('/admin/users/new', [
         'required-login',
     ],
     function($request){
-        return new Response(200, Admin\User::getNewUser($request));
+        return new Response(200, Login\User::getNewUser($request));
     }
 ]);
 
 //ROTA DE CADASTRO DE UM NOVO USUÁRIO (POST)
 $obRouter->post('/login/users/new', [
     'middlewares' => [
-        'required-login',
+        //'required-login',
     ],
     function($request){
         return new Response(200, Login\User::setNewUser($request));
+    }
+]);
+
+//ROTA DE RECUPERAR SENHA
+$obRouter->post('/login/users/recover', [
+    'middlewares' => [
+        //'required-login',
+    ],
+    function($request){
+        return new Response(200, Login\User::recoverPassword($request));
     }
 ]);
 
