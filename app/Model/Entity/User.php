@@ -56,7 +56,7 @@ class User {
         $this->updated_date = date('Y-m-d H:i:s');
 
         //INSERE A INSTANCIA NO BANCO
-        $this->id = (new Database('usuarios'))->insert([
+        $this->id = (new Database('nefroz','usuarios'))->insert([
             'nome'  => $this->nome,
             'email' => $this->email,
             'senha' => $this->senha,
@@ -74,11 +74,15 @@ class User {
      */
     public function atualizar()
     {
+
+        $this->updated_date = date('Y-m-d H:i:s');
+
         //ATUALIZA O DEPOIMENTO NO BANCO DE DADOS
-        return (new Database('usuarios'))->update('id = '. $this->id, [
+        return (new Database('nefroz','usuarios'))->update('id = '. $this->id, [
             'nome'  => $this->nome,
             'email' => $this->email,
-            'senha' => $this->senha
+            'senha' => $this->senha,
+            'updated_date' => $this->updated_date
         ]);
     }
 
@@ -89,7 +93,7 @@ class User {
     public function excluir()
     {
         //EXCLUI O DEPOIMENTO DO BANCO DE DADOS
-        return (new Database('usuarios'))->delete('id = '.$this->id);
+        return (new Database('nefroz','usuarios'))->delete('id = '.$this->id);
     }
 
 
@@ -103,8 +107,6 @@ class User {
     {
         return self::getUsers('id = '.$id)->fetchObject(self::class);
     }
-
-
 
 
     /**
@@ -129,7 +131,7 @@ class User {
      */
     public static function getUsers($where = null, $order = null, $limit = null, $fields = '*')
     {
-        return (new Database('usuarios'))->select($where, $order, $limit, $fields);
+        return (new Database('nefroz','usuarios'))->select($where, $order, $limit, $fields);
     }
 
 }

@@ -70,5 +70,25 @@ class Page {
         ]);
     }
 
+    /**
+     * Método responsável por rederizar a view do painel com conteúdos dinamicos
+     * @param string $title
+     * @param string $content
+     * @return string
+     */
+    public static function getPanel($title, $content, $currentModule)
+    {
+
+        //RENDERIZA A VIEW DO PAINEL
+        $contentPanel = View::render('login/panel', [
+            //'menu' => self::getMenu($currentModule),
+            'content' => $content
+        ]);
+
+        //RETORNA A PÁGINA RENDERIZADA
+        return self::getPage($title,$contentPanel);
+
+    }
+
 
 }

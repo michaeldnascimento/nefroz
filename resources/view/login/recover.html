@@ -1,0 +1,16 @@
+<h3 style="text-align: center">Memória Da FM</h3>
+<div id="logreg-forms">
+    <form method="post" action="{{URL}}/login/users/newPass" autocomplete="off" class="form-signin">
+
+        <input type="hidden" value="{{token}}" name="token" id="token">
+        <input type="hidden" value="{{email}}" name="login" id="login">
+
+
+        <input type="password" id="senha" name="senha" class="form-control" placeholder="Senha" required>
+        <input type="password" id="confirmaSenha"  name="confirmaSenha" class="form-control" placeholder="Confirme a Senha" required>
+
+        <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Salvar Nova senha</button>
+
+    </form>
+
+</div>

@@ -14,6 +14,12 @@ use PDOStatement;
 class Database extends DB{
 
     /**
+     * Nome do banco a ser manipulada
+     * @var string
+     */
+    private $db;
+
+    /**
      * Nome da tabela a ser manipulada
      * @var string
      */
@@ -22,13 +28,17 @@ class Database extends DB{
 
     /**
      * Define a tabela e instancia e conexão
+     * @param string|null $db
      * @param string|null $table
      */
-    public function __construct($table = null) {
+    public function __construct($db = null, $table = null) {
 
+        //RECEBE NOME DO BANCO E TABELA
+        $this->db = $db;
         $this->table = $table;
+
         $config = new Config();
-        $config->mysql['dbname'] = 'nefroz';
+        $config->mysql['dbname'] = $this->db;
         parent::__construct($config->mysql);
 
     }
@@ -43,10 +53,14 @@ class Database extends DB{
 
             //DADOS DA QUERY
             $fields = array_keys($values);
+            //print_r($values);
             //$binds  = array_pad([],count($fields),'?');
 
             //MONTA A QUERY
             $query = 'INSERT INTO '.$this->table.' ('.implode(',',$fields).') VALUES (:' . implode(',:',$fields) . ')';
+
+            //print_r($query);
+            //exit;
 
             $this->setQuery($query);
 
@@ -109,17 +123,41 @@ class Database extends DB{
      * @return boolean
      */
     public function update($where,$values){
-        //DADOS DA QUERY
-        $fields = array_keys($values);
+        try {
 
-        //MONTA A QUERY
-        $query = 'UPDATE '.$this->table.' SET '.implode('=?,',$fields).'=? WHERE '.$where;
+            //DADOS DA QUERY
+            $fields = array_keys($values);
+            //$dados = array_values($values);
 
-        //EXECUTAR A QUERY
-        $this->execute($query,array_values($values));
+            //MONTAR OS PARAMETERS
+            foreach ($fields as $v) {
+                //$params[] = $v." = '".$dados[$k]."'";
+                $params[] = $v."=:".$v;
+            }
 
-        //RETORNA SUCESSO
-        return true;
+            //MONTA A QUERY
+            $query = 'UPDATE '.$this->table.' SET '.implode(', ', $params).' WHERE '.$where;
+
+            //EXECUTAR A QUERY
+            $this->setQuery($query);
+
+            //MONTA O BIND COM OS CAMPOS ENVIADOS
+            foreach ($fields as $field):
+                $this->bind(':'. $field, $values[$field]);
+            endforeach;
+
+            //EXECUTA O INSERT
+            if ($this->execute()) {
+
+                //RETORNA SE A QUERY FOI EXECUTADA
+                return true;
+
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
     }
 
     /**

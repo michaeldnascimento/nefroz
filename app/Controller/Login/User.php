@@ -5,48 +5,14 @@ namespace App\Controller\Login;
 use App\Http\Request;
 use \App\Utils\View;
 use \App\Model\Entity\User as EntityUser;
+use \App\Model\Entity\Recover as EntityRecover;
+use \App\Model\Entity\Email as EntityEmail;
 
 class User extends Page {
 
 
     /**
-     * Método responsável por retornar a renderização a view de listagem de usuários
-     * @param Request $request
-     * @return string
-     */
-    public static function getUsers($request)
-    {
-        //CONTEÚDO DE HOME
-        $content = View::render('admin/modules/users/index', [
-            'itens'       => self::getUserItems($request, $obPagination),
-            'pagination'  => parent::getPagination($request, $obPagination),
-            'status'      => self::getStatus($request)
-        ]);
-
-        //RETORNA A PÁGINA COMPLETA
-        return parent::getPanel('Usuários > WDEV', $content, 'users');
-    }
-
-    /**
-     * Método responsável por retornar o formulário de cadastro de um novo depoimento
-     * @param Request $request
-     * @return string
-     */
-    public static function getNewUser($request)
-    {
-        //CONTEÚDO DO FORMULÁRIO
-        $content = View::render('admin/modules/users/form', [
-            'title'    => 'Cadastrar Usuário',
-            'nome'     => '',
-            'email'    => '',
-            'status'   => self::getStatus($request)
-        ]);
-
-        return parent::getPanel('Cadastro usuário > WDEV', $content, 'users');
-    }
-
-    /**
-     * Método responsável por cadastrar um depoimento no banco
+     * Método responsável por cadastrar um usuário no banco
      * @param Request $request
      * @return string
      */
@@ -69,6 +35,7 @@ class User extends Page {
         //VALIDA E-MAIL DO USUÁRIO
         $obUser = EntityUser::getUserByEmail($email);
 
+        //VERIFICA SE O USUÁRIO JÁ EXISTE
         if ($obUser != ''){
             //REDIRECIONA O USUÁRIO
             $request->getRouter()->redirect('/login?status=duplicated');
@@ -83,6 +50,147 @@ class User extends Page {
 
         //REDIRECIONA O USUÁRIO
         $request->getRouter()->redirect('/login?status=created');
+
+    }
+
+    /**
+     * Método responsável por recuperar a senha do usuário
+     * @param Request $request
+     * @return string
+     */
+    public static function recoverPassword($request)
+    {
+
+        //POST VARS
+        $postVars = $request->getPostVars();
+        $email = isset($postVars['resetEmail']) ? $postVars['resetEmail'] : '';
+
+        //VALIDA E-MAIL DO USUÁRIO
+        $obRecover = EntityUser::getUserByEmail($email);
+
+        //VERIFICA SE O LOGIN EXISTE
+        if ($obRecover == ''){
+            //REDIRECIONA O USUÁRIO
+            $request->getRouter()->redirect('/login?status=notFound');
+        }
+
+        //NOVA INSTANCIA DE USUÁRIO
+        $obRecover = new EntityRecover();
+        $obRecover->login = $email;
+        $obRecover->token = sha1(date('Y-m-d H:i:s'));
+        $obRecover->cadastrar();
+
+        //VERIFICA O ID RECUPERAÇÃO
+        if ($obRecover->id == ''){
+            $request->getRouter()->redirect('/login?status=erroRecover');
+        }
+
+        //ENVIAR E-MAIL COM O RESET SENHA
+        $entityEmail = new EntityEmail();
+        $sendEmail = $entityEmail->emailPasswordRecover($obRecover);
+
+        //VERIFICA SE O E-MAIL FOI ENVIADO
+        if ($sendEmail == ''){
+            $request->getRouter()->redirect('/login?status=errorEmail');
+        }
+
+        //RETORNA PARA LOGIN
+        $request->getRouter()->redirect('/login?status=send');
+
+    }
+
+    /**
+     * Método responsável por retornar o formulário de edição de um novo depoimento
+     * @param Request $request
+     * @param string $token
+     * @param string $email
+     * @return string
+     */
+    public static function recoverTokenValidation($request, $token, $email)
+    {
+        //OBTÉM O DEPOIMENTO DO BANCO DE DADOS
+        $obToken = EntityRecover::tokenValidation($token);
+
+        //VERIFICA SE O TOKEN NÃO SOFREU ALTERAÇÕES
+        if ($token != $obToken['token']){
+            $request->getRouter()->redirect('/login?status=changedToken');
+        }
+
+        //VALIDA E-MAIL DO USUÁRIO
+        $obRecover = EntityUser::getUserByEmail($email);
+
+        //VERIFICA SE O LOGIN EXISTE
+        if ($obRecover == ''){
+            //REDIRECIONA O USUÁRIO
+            $request->getRouter()->redirect('/login?status=notFound');
+        }
+
+        //CONTEÚDO DA PÁGINA DE LOGIN
+        $content = View::render('login/recover', [
+            'token'    => $token,
+            'email'    => $email,
+            'status'   => self::getStatus($request)
+        ]);
+
+        //RETORNA A PÁGINA COMPLETA
+        return parent::getPage('Nova Senha Usuário > Nefroz', $content);
+    }
+
+    /**
+     * Método responsável por cadastrar uma nova senha no banco
+     * @param Request $request
+     * @return string
+     */
+    public static function setNewPassword($request)
+    {
+
+        //POST VARS
+        $postVars = $request->getPostVars();
+        $token = isset($postVars['token']) ? $postVars['token'] : '';
+        $login  = isset($postVars['login']) ? $postVars['login'] : '';
+        $senha = isset($postVars['senha']) ? $postVars['senha'] : '';
+        $confirmaSenha = isset($postVars['confirmaSenha']) ? $postVars['confirmaSenha'] : '';
+
+        //VERIFICA A VALIDAÇÃO DE SENHA
+        if ($senha != $confirmaSenha){
+            //REDIRECIONA O USUÁRIO
+            $request->getRouter()->redirect('/login?status=confirmation');
+        }
+
+        //OBTÉM O DEPOIMENTO DO BANCO DE DADOS
+        $obToken = EntityRecover::tokenValidation($token);
+
+        //VERIFICA SE O TOKEN NÃO SOFREU ALTERAÇÕES
+        if ($token != $obToken['token']){
+            $request->getRouter()->redirect('/login?status=changedToken');
+        }
+        
+        //NOVA INSTANCIA DE RECOVER -
+        $obRecover = new EntityRecover();
+        $obRecover->id = $obToken['id'];
+        $obRecover->login = $obToken['login'];
+        $obRecover->token = $obToken['token'];
+        $obRecover->status = 0;
+        $obRecover->atualizar();
+
+        //VERIFICA SE OS VALORES FORAM PASSADOS
+        if ($obRecover->date_update == ''){
+            $request->getRouter()->redirect('/login?status=erroRecover');
+        }
+
+        //VALIDA E-MAIL DO USUÁRIO
+        $user = EntityUser::getUserByEmail($login);
+
+        //ATUALIZA A INSTANCIA
+        $obUser = new EntityUser();
+        $obUser->id = $user['id'];
+        $obUser->nome = $user['nome'];
+        $obUser->email = $user['email'];
+        $obUser->senha =  password_hash($senha, PASSWORD_DEFAULT);
+        $obUser->atualizar();
+
+        //REDIRECIONA O USUÁRIO
+        $request->getRouter()->redirect('/login?status=updateSuccess');
 
     }
 
@@ -110,131 +218,28 @@ class User extends Page {
             case 'deleted':
                 return Alert::getSuccess('Usuário excluído com sucesso!');
                 break;
+            case 'send':
+                return Alert::getSuccess('E-mail de recuperação foi enviado com Sucesso!');
+                break;
+            case 'updateSuccess':
+                return Alert::getSuccess('Senha Atualizada com sucesso!');
+                break;
             case 'confirmation':
                 return Alert::getError('Senha e confirmação de senha são diferentes, tente novamente!');
                 break;
             case 'duplicated':
                 return Alert::getError('O E-mail digitado já está sendo utilizado por outro usuário!');
                 break;
+            case 'notFound':
+                return Alert::getError('O E-mail não foi localizado!');
+                break;
+            case 'changedToken':
+                return Alert::getError('Este link será desativado! O link enviado parece ter sofrido alguma alteração, por isso não é possível fazer a verificação. Por favor solicite novamente a recuperação da senha.');
+                break;
+            case 'errorEmail':
+                return Alert::getError('Erro ao enviar o e-mail');
+                break;
         }
     }
-
-    /**
-     * Método responsável por retornar o formulário de edição de um novo depoimento
-     * @param Request $request
-     * @param integer $id
-     * @return string
-     */
-    public static function getEditUser($request, $id)
-    {
-        //OBTÉM O DEPOIMENTO DO BANCO DE DADOS
-        $obUser = EntityUser::getUserById($id);
-
-        //VALIDA A INSTANCIA
-        if(!$obUser instanceof EntityUser){
-            $request->getRouter()->redirect('/admin/users');
-        }
-
-        //CONTEÚDO DO FORMULÁRIO
-        $content = View::render('admin/modules/users/form', [
-            'title'    => 'Editar Usuário',
-            'nome'     => $obUser->nome,
-            'email'    => $obUser->email,
-            'status' => self::getStatus($request)
-        ]);
-
-        return parent::getPanel('Editar usuário > WDEV', $content, 'users');
-    }
-
-    /**
-     * Método responsável por grava a ataulização de um usuário
-     * @param Request $request
-     * @param integer $id
-     * @return string
-     */
-    public static function setEditUser($request, $id)
-    {
-        //OBTÉM O USUARIO DO BANCO DE DADOS
-        $obUser = EntityUser::getUserById($id);
-
-        //VALIDA A INSTANCIA
-        if(!$obUser instanceof EntityUser){
-            $request->getRouter()->redirect('/admin/users');
-        }
-
-        //POST VARS
-        $postVars = $request->getPostVars();
-
-        $email = isset($postVars['email']) ? $postVars['email'] : '';
-        $nome  = isset($postVars['nome']) ? $postVars['nome'] : '';
-        $senha = isset($postVars['senha']) ? $postVars['senha'] : '';
-
-        //VALIDA E-MAIL DO USUÁRIO
-        $obUserEmail = EntityUser::getUserByEmail($email);
-        if ($obUserEmail instanceof EntityUser && $obUser->id != $id){
-            //REDIRECIONA O USUÁRIO
-            $request->getRouter()->redirect('/admin/users/'.$id.'/edit?status=duplicated');
-        }
-
-        //ATUALIZA A INSTANCIA
-        $obUser->nome = $nome;
-        $obUser->email = $email;
-        $obUser->senha =  password_hash($senha, PASSWORD_DEFAULT);
-        $obUser->atualizar();
-
-        //REDIRECIONA O USUÁRIO
-        $request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?status=updated');
-    }
-
-
-    /**
-     * Método responsável por retornar o formulário de exclusão de um Usuário
-     * @param Request $request
-     * @param integer $id
-     * @return string
-     */
-    public static function getDeleteUser($request, $id)
-    {
-        //OBTÉM O USUARIO DO BANCO DE DADOS
-        $obUser = EntityUser::getUserById($id);
-
-        //VALIDA A INSTANCIA
-        if(!$obUser instanceof EntityUser){
-            $request->getRouter()->redirect('/admin/users');
-        }
-
-        //CONTEÚDO DO FORMULÁRIO
-        $content = View::render('admin/modules/users/delete', [
-            'nome'     => $obUser->nome,
-            'email'    => $obUser->email
-        ]);
-
-        return parent::getPanel('Excluir Usuário > WDEV', $content, 'users');
-    }
-
-
-    /**
-     * Método responsável por excluir um Usuário
-     * @param Request $request
-     * @param integer $id
-     * @return string
-     */
-    public static function setDeleteUser($request, $id)
-    {
-        //OBTÉM O USUARIO DO BANCO DE DADOS
-        $obUser = EntityUser::getUserById($id);
-
-        //VALIDA A INSTANCIA
-        if(!$obUser instanceof EntityUser){
-            $request->getRouter()->redirect('/admin/users');
-        }
-
-        //EXCLUI O DEPOIMENTO
-        $obUser->excluir();
-
-        //REDIRECIONA O USUÁRIO
-        $request->getRouter()->redirect('/admin/users?status=deleted');
-    }
-
 
 }

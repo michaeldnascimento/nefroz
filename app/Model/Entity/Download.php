@@ -49,7 +49,7 @@ class Download {
         $this->date_download = date('Y-m-d H:i:s');
 
         //INSERE A INSTANCIA NO BANCO
-        $this->id = (new Database('downloads'))->insert([
+        $this->id = (new Database('nefroz', 'downloads'))->insert([
             'name'  => $this->name,
             'email' => $this->email,
             'version' => $this->version,
@@ -58,70 +58,6 @@ class Download {
 
         //SUCESSO
         return true;
-    }
-
-    /**
-     * Método responsável por atualizar os dados no banco
-     * @return bool
-     */
-    public function atualizar()
-    {
-        //ATUALIZA O DEPOIMENTO NO BANCO DE DADOS
-        return (new Database('usuarios'))->update('id = '. $this->id, [
-            'nome'  => $this->nome,
-            'email' => $this->email,
-            'senha' => $this->senha
-        ]);
-    }
-
-    /**
-     * Método responsável por excluir um usuário do banco de dados
-     * @return boolean
-     */
-    public function excluir()
-    {
-        //EXCLUI O DEPOIMENTO DO BANCO DE DADOS
-        return (new Database('usuarios'))->delete('id = '.$this->id);
-    }
-
-
-    /**
-     * Método responsável por retornar um usuário com base no seu ID
-     *
-     * @param integer $id
-     * @return User
-     */
-    public static function getUserById($id)
-    {
-        return self::getUsers('id = '.$id)->fetchObject(self::class);
-    }
-
-
-
-
-    /**
-     * Método responsavel por retornar um usuário com base em seu e-mail
-     * @param string $email
-     * @return User
-     */
-    public static function getUserByEmail($email)
-    {
-
-        return self::getUsers('email = "'. $email.'"');
-        //return (new Database('usuarios'))->select('email = "'. $email.'"')->fetchObject(self::class);
-    }
-
-    /**
-     * Método responsável por retornar depoimentos
-     * @param string $where
-     * @param string $order
-     * @param string $limit
-     * @param string $fields
-     * @return PDOStatement
-     */
-    public static function getUsers($where = null, $order = null, $limit = null, $fields = '*')
-    {
-        return (new Database('usuarios'))->select($where, $order, $limit, $fields);
     }
 
 }

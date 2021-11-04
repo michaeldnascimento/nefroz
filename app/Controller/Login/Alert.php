@@ -15,6 +15,8 @@ class Alert {
      */
     public static function getSuccess($message)
     {
+        echo $message;
+        exit();
         return View::render('login/alert/status', [
             'tipo' => 'success',
             'mensagem' => $message
