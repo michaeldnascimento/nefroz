@@ -49,8 +49,11 @@ class Home {
     {
         //INICIA A SESSÃO
         self::init();
-
-        //var_dump($_SESSION);
+        
+        //VERIFICA SE ESTÁ LOGADO NO INTRANET
+        if (isset($_SESSION["usuario"])){
+            return isset($_SESSION["usuario"]);
+        }
 
         //RETORNA A VERIFICAÇÃO
         return isset($_SESSION['nefroz']['login']['usuario']['id']);
@@ -66,8 +69,17 @@ class Home {
         //INICIA A SESSÃO
         self::init();
 
+        if (!isset($_SESSION["usuario"])) {
+
         //DESLOGA O URUÁRIO
         unset($_SESSION['nefroz']['login']['usuario']);
+
+        }else{
+
+        //DESLOGA O URUÁRIO INTRANET
+        unset($_SESSION['usuario']);
+
+        }
 
         //SUCESSO
         return true;

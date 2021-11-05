@@ -21,25 +21,6 @@ class Page {
      */
     private static function getHeader()
     {
-
-        Template::$assets = [
-            'jquery' => TRUE,
-            'bootstrap' => TRUE,
-            'font-awesome' => TRUE,
-            'jquery-ui' => TRUE,
-            'jquery-maskedinput' => TRUE,
-            'jquery-maskmoney' => TRUE,
-            'bootstrap-dialog' => TRUE,
-            'toastr' => FALSE,
-            'owl-carousel' => FALSE,
-        ];
-
-        Template::loadAssets();
-        Template::setSession(false);
-        Template::$sistema = "Nefroz";
-        Template::getHeader();
-        Template::getMenu();
-
         return View::render('pages/header');
     }
 

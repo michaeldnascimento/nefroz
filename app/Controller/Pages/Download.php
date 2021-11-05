@@ -28,15 +28,26 @@ class Download extends Page {
     public static function getDownload($request)
     {
 
-        //RETORNA SESSION USUARIO
-        $user = SessionLogin::getSession();
+        //VERIFICA SE O USUÁRIO ESTÁ LOGADO NO INTRANET
+        if (!isset($_SESSION["usuario"])) {
 
-        //VALIDA E-MAIL DO USUÁRIO
-        $obUser = EntityUser::getUserByEmail($user['email']);
+            //RETORNA SESSION USUARIO
+            $user = SessionLogin::getSession();
 
-        if ($obUser == '') {
-            //REDIRECIONA O USUÁRIO
-            $request->getRouter()->redirect('/?status=location');
+            //VALIDA E-MAIL DO USUÁRIO
+            $obUser = EntityUser::getUserByEmail($user['email']);
+
+            if ($obUser == '') {
+                //REDIRECIONA O USUÁRIO
+                $request->getRouter()->redirect('/?status=location');
+            }
+
+        }else{
+
+            //ARMAZENA AS VARIAVEIS DE SESSÃO
+            $user['nome'] = $_SESSION['usuario']->nome;
+            $user['email'] = $_SESSION['usuario']->email;
+
         }
 
         //NOVA INSTANCIA DE DOWNLOAD

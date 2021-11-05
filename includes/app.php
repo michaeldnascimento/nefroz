@@ -9,6 +9,7 @@ setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 
 //COMPOSER - AUTOLOAD
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../includes/topo.php';
 
 use \App\Utils\View;
 use \App\Common\Environment;
