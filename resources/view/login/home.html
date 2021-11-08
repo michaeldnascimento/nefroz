@@ -4,7 +4,7 @@
             {{status}}
             <h1 class="h4 mb-3 font-weight-normal" style="text-align: center"> Acesso rápido com</h1>
             <div class="social-login">
-                <a class="btn google-btn social-btn btn-block" href="{{URL}}/google/" type="button"><span><i class="fab fa-google"></i> Entrar com Google</span> </a>
+                <a class="btn" style="color: #006748" href="https://intranet.fm.usp.br/usuario/login/?loc=https://intranet.fm.usp.br/nefroz/login" type="button"><span><i class="fa fa-user"></i> INTRANET</span> </a>
             </div>
             <p style="text-align:center"> OU  </p>
             <input type="email" name="email" class="form-control" placeholder="E-mail" required autofocus>
@@ -24,11 +24,7 @@
         </form>
 
         <form action="{{URL}}/login/users/new" method="post" class="form-signup">
-            <div class="social-login">
-                <a class="btn google-btn social-btn" type="button" href="google/"><span><i class="fab fa-google"></i> Inscreva-se no Google</span> </a>
-            </div>
-
-            <p style="text-align:center">OU</p>
+            <h1 class="h4 mb-3 font-weight-normal" style="text-align: center"> CADASTRE PARA ACESSAR</h1>
 
             <input type="text" id="user-name" name="nome" class="form-control" placeholder="Nome Completo" required>
             <input type="email" id="user-email" name="email" class="form-control" placeholder="E-mail" required>
