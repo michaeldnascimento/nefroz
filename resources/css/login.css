@@ -41,7 +41,13 @@
     /*width:190px;*/
     font-size: 1.3rem;
 }
-
+#logreg-forms .intranet{
+    font-weight: 100;
+    color: white;
+    /* width: 190px; */
+    font-size: 1.3rem;
+    background: green;
+}
 #logreg-forms a{
     display: block;
     padding-top:10px;

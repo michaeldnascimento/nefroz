@@ -100,7 +100,7 @@ class User extends Page {
     }
 
     /**
-     * Método responsável por retornar o formulário de edição de um novo depoimento
+     * Método responsável por validar o token recebido da recuperação de senha
      * @param Request $request
      * @param string $token
      * @param string $email
@@ -129,7 +129,7 @@ class User extends Page {
         $content = View::render('login/recover', [
             'token'    => $token,
             'email'    => $email,
-            'status'   => self::getStatus($request)
+            //'status'   => self::getStatus($request)
         ]);
 
         //RETORNA A PÁGINA COMPLETA
@@ -147,12 +147,12 @@ class User extends Page {
         //POST VARS
         $postVars = $request->getPostVars();
         $token = isset($postVars['token']) ? $postVars['token'] : '';
-        $login  = isset($postVars['login']) ? $postVars['login'] : '';
+        $login = isset($postVars['login']) ? $postVars['login'] : '';
         $senha = isset($postVars['senha']) ? $postVars['senha'] : '';
         $confirmaSenha = isset($postVars['confirmaSenha']) ? $postVars['confirmaSenha'] : '';
 
         //VERIFICA A VALIDAÇÃO DE SENHA
-        if ($senha != $confirmaSenha){
+        if ($senha != $confirmaSenha) {
             //REDIRECIONA O USUÁRIO
             $request->getRouter()->redirect('/login?status=confirmation');
         }
@@ -161,10 +161,10 @@ class User extends Page {
         $obToken = EntityRecover::tokenValidation($token);
 
         //VERIFICA SE O TOKEN NÃO SOFREU ALTERAÇÕES
-        if ($token != $obToken['token']){
+        if ($token != $obToken['token']) {
             $request->getRouter()->redirect('/login?status=changedToken');
         }
-        
+
         //NOVA INSTANCIA DE RECOVER -
         $obRecover = new EntityRecover();
         $obRecover->id = $obToken['id'];
@@ -174,7 +174,7 @@ class User extends Page {
         $obRecover->atualizar();
 
         //VERIFICA SE OS VALORES FORAM PASSADOS
-        if ($obRecover->date_update == ''){
+        if ($obRecover->date_update == '') {
             $request->getRouter()->redirect('/login?status=erroRecover');
         }
 
@@ -186,60 +186,12 @@ class User extends Page {
         $obUser->id = $user['id'];
         $obUser->nome = $user['nome'];
         $obUser->email = $user['email'];
-        $obUser->senha =  password_hash($senha, PASSWORD_DEFAULT);
+        $obUser->senha = password_hash($senha, PASSWORD_DEFAULT);
         $obUser->atualizar();
 
         //REDIRECIONA O USUÁRIO
         $request->getRouter()->redirect('/login?status=updateSuccess');
 
-    }
-
-    /**
-     * Método responsável por retornar a mensagem de status
-     * @param Request $request
-     * @return string
-     */
-    private static function getStatus($request)
-    {
-        //QUERY PARAMS
-        $queryParams = $request->getQueryParams();
-
-        //STATUS
-        if(!isset($queryParams['status'])) return '';
-
-        //MENSAGEM DE STATUS
-        switch ($queryParams['status']) {
-            case 'created':
-                return Alert::getSuccess('Usuário criado com sucesso!');
-                break;
-            case 'updated':
-                return Alert::getSuccess('Usuário atualizado com sucesso!');
-                break;
-            case 'deleted':
-                return Alert::getSuccess('Usuário excluído com sucesso!');
-                break;
-            case 'send':
-                return Alert::getSuccess('E-mail de recuperação foi enviado com Sucesso!');
-                break;
-            case 'updateSuccess':
-                return Alert::getSuccess('Senha Atualizada com sucesso!');
-                break;
-            case 'confirmation':
-                return Alert::getError('Senha e confirmação de senha são diferentes, tente novamente!');
-                break;
-            case 'duplicated':
-                return Alert::getError('O E-mail digitado já está sendo utilizado por outro usuário!');
-                break;
-            case 'notFound':
-                return Alert::getError('O E-mail não foi localizado!');
-                break;
-            case 'changedToken':
-                return Alert::getError('Este link será desativado! O link enviado parece ter sofrido alguma alteração, por isso não é possível fazer a verificação. Por favor solicite novamente a recuperação da senha.');
-                break;
-            case 'errorEmail':
-                return Alert::getError('Erro ao enviar o e-mail');
-                break;
-        }
     }
 
 }

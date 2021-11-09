@@ -117,6 +117,24 @@ class Home extends Page {
             case 'duplicated':
                 return Alert::getError('E-mail já está cadastrado, caso não lembre do acesso clique em esqueceu a senha.');
                 break;
+            case 'send':
+                return Alert::getSuccess('E-mail de recuperação foi enviado com Sucesso!');
+                break;
+            case 'updateSuccess':
+                return Alert::getSuccess('Senha atualizada com sucesso!');
+                break;
+            case 'confirmation':
+                return Alert::getError('Senha e confirmação de senha são diferentes, tente novamente!');
+                break;
+            case 'notFound':
+                return Alert::getError('O E-mail não foi localizado!');
+                break;
+            case 'changedToken':
+                return Alert::getError('Este link será desativado! O link enviado parece ter sofrido alguma alteração, por isso não é possível fazer a verificação. Por favor solicite novamente a recuperação da senha.');
+                break;
+            case 'errorEmail':
+                return Alert::getError('Erro ao enviar o e-mail');
+                break;
         }
     }
 

@@ -1,10 +1,10 @@
 <h3 style="text-align: center">Nefroz</h3>
     <div id="logreg-forms">
-        <form method="post" autocomplete="off" class="form-signin">
+        <form method="post" autocomplete="off" class="form-signin" autocomplete="off">
             {{status}}
             <h1 class="h4 mb-3 font-weight-normal" style="text-align: center"> Acesso rápido com</h1>
-            <div class="social-login">
-                <a class="btn" style="color: #006748" href="https://intranet.fm.usp.br/usuario/login/?loc=https://intranet.fm.usp.br/nefroz/login" type="button"><span><i class="fa fa-user"></i> INTRANET</span> </a>
+            <div class="intranet">
+                <a class="btn intranet-bnt" style="color: #ffffff" href="https://intranet.fm.usp.br/usuario/login/?loc=https://intranet.fm.usp.br/nefroz/login" type="button"><span><i class="fa fa-user"></i> INTRANET</span> </a>
             </div>
             <p style="text-align:center"> OU  </p>
             <input type="email" name="email" class="form-control" placeholder="E-mail" required autofocus>
@@ -17,13 +17,13 @@
             <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Cadastrar Nova Conta</button>
         </form>
 
-        <form action="{{URL}}/login/users/recover" method="post" class="form-reset">
+        <form action="{{URL}}/login/users/recover" method="post" class="form-reset" autocomplete="off">
             <input type="email" id="resetEmail" name="resetEmail" class="form-control" placeholder="Email Cadastrado" required="" autofocus="">
             <button class="btn btn-primary btn-block" type="submit">Redefinir Senha</button>
             <a href="#" id="cancel_reset"><i class="fas fa-angle-left"></i> Voltar</a>
         </form>
 
-        <form action="{{URL}}/login/users/new" method="post" class="form-signup">
+        <form action="{{URL}}/login/users/new" method="post" class="form-signup" autocomplete="off">
             <h1 class="h4 mb-3 font-weight-normal" style="text-align: center"> CADASTRE PARA ACESSAR</h1>
 
             <input type="text" id="user-name" name="nome" class="form-control" placeholder="Nome Completo" required>
@@ -34,5 +34,5 @@
             <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Inscrever-se</button>
             <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Voltar</a>
         </form>
-</div>
+    </div>
 
