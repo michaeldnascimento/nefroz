@@ -16,7 +16,7 @@ class Download extends Page {
     public static function startDownload($request){
 
         //INICIAR O DOWNLOAD
-        $request->getRouter()->redirect('/resources/view/pages/download/fisiopatologia_renal_v1.0.zip');
+        $request->getRouter()->redirect('/resources/view/pages/download/fisiopatologia_renal_v1.0.1.rar');
 
     }
 
@@ -54,7 +54,7 @@ class Download extends Page {
         $obUser = new EntityDownload();
         $obUser->name = $user['nome'];
         $obUser->email = $user['email'];
-        $obUser->version = 1;
+        $obUser->version = "1.0.1";
         $obUser->cadastrar();
 
         //START DOWNLOAD
